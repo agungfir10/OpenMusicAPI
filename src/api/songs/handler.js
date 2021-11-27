@@ -1,5 +1,6 @@
 const ClientError = require('../../exceptions/ClientError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const ServerError = require('../../utils/ServerError');
 
 class SongsHandler {
   constructor(service, validator) {
@@ -51,10 +52,7 @@ class SongsHandler {
         return response;
       }
 
-      const response = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
+      const response = h.response(ServerError);
       response.code(500);
       return response;
     }
@@ -92,11 +90,8 @@ class SongsHandler {
         response.code(error.statusCode);
         return response;
       }
-      // Server ERROR!
-      const response = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
+
+      const response = h.response(ServerError);
       response.code(500);
       return response;
     }
@@ -137,10 +132,7 @@ class SongsHandler {
       }
 
       // Server ERROR!
-      const response = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
+      const response = h.response(ServerError);
       response.code(500);
       return response;
     }
@@ -169,11 +161,7 @@ class SongsHandler {
         return response;
       }
 
-      // Server ERROR!
-      const response = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
+      const response = h.response(ServerError);
       response.code(500);
       return response;
     }
