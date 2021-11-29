@@ -1,4 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const ServerError = require('../../utils/ServerError');
 
@@ -36,11 +35,9 @@ class SongsHandler {
           status: 'fail',
           message: error.message,
         });
-        if (error instanceof ClientError) {
-          response.code(error.statusCode);
-        } else {
-          response.code(400);
-        }
+
+        response.code(400);
+
         return response;
       }
 
@@ -59,9 +56,9 @@ class SongsHandler {
     };
   }
 
-  async getSongByIdHandler(request, h) {
+  async getSongByIdHandler({ params }, h) {
     try {
-      const { id } = request.params;
+      const { id } = params;
       const song = await this._service.getSongById(id);
 
       const response = h.response({
@@ -73,13 +70,13 @@ class SongsHandler {
       response.code(200);
       return response;
     } catch (error) {
-      if (error instanceof ClientError) {
+      if (error) {
         const response = h.response({
           status: 'fail',
           message: error.message,
         });
 
-        response.code(error.statusCode);
+        response.code(404);
         return response;
       }
 
@@ -123,7 +120,6 @@ class SongsHandler {
         return response;
       }
 
-      // Server ERROR!
       const response = h.response(ServerError);
       response.code(500);
       return response;
