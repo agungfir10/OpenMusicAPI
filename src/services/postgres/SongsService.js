@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -8,11 +9,11 @@ class SongsService {
     this._pool = new Pool();
   }
 
-  async addSong({ title, year, performer, genre, duration }) {
+  async addSong({ title, year, performer, genre, duration, albumId }) {
     const id = `song-${nanoid(16)}`;
     const query = {
-      text: 'INSERT INTO songs VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-      values: [id, title, year, performer, genre, duration],
+      text: 'INSERT INTO songs VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), $7) RETURNING id',
+      values: [id, title, year, performer, genre, duration, albumId],
     };
 
     const { rows, rowCount } = await this._pool.query(query);
@@ -24,10 +25,13 @@ class SongsService {
     return rows[0].id;
   }
 
-  async getSongs() {
-    const { rows } = await this._pool.query(
-      'SELECT id, title, performer FROM songs'
-    );
+  async getSongs({ title = '', performer = '' }) {
+    const query = {
+      text: 'SELECT id, title, performer FROM songs WHERE title ILIKE $1 AND performer ILIKE $2',
+      values: [`%${title}%`, `%${performer}%`]
+    };
+
+    const { rows } = await this._pool.query(query);
     return rows;
   }
 

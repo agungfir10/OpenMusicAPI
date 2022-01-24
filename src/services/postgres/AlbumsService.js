@@ -26,10 +26,18 @@ class AlbumsService {
 
     async getAlbumById(id) {
         const query = {
-            text: 'SELECT id, name FROM albums WHERE id=$1',
+            text: 'SELECT id, name, year FROM albums WHERE id = $1',
             values: [id],
         };
         const { rows, rowCount } = await this._pool.query(query);
+
+        const querySongs = {
+            text: 'SELECT * FROM songs WHERE "albumId" =  $1',
+            values: [id]
+        };
+
+        const { rows: rowsSong } = await this._pool.query(querySongs);
+        rows[0].songs = rowsSong;
 
         if (!rowCount) {
             throw new NotFoundError('Album tidak ditemukan');
