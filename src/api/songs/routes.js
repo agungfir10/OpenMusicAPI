@@ -4,7 +4,7 @@ const routes = (handler) => [
     path: '/songs',
     handler: handler.postSongHandler,
     options: {
-      auth: 'notesapp_jwt',
+      auth: 'openmusicapp_jwt',
     },
   },
   {
@@ -12,7 +12,7 @@ const routes = (handler) => [
     path: '/songs',
     handler: handler.getSongsHandler,
     options: {
-      auth: 'notesapp_jwt',
+      auth: 'openmusicapp_jwt',
     },
   },
   {
@@ -20,7 +20,7 @@ const routes = (handler) => [
     path: '/songs/{id}',
     handler: handler.getSongByIdHandler,
     options: {
-      auth: 'notesapp_jwt',
+      auth: 'openmusicapp_jwt',
     },
   },
   {
@@ -28,7 +28,7 @@ const routes = (handler) => [
     path: '/songs/{id}',
     handler: handler.putSongByIdHandler,
     options: {
-      auth: 'notesapp_jwt',
+      auth: 'openmusicapp_jwt',
     },
   },
   {
@@ -36,7 +36,7 @@ const routes = (handler) => [
     path: '/songs/{id}',
     handler: handler.deleteSongByIdHandler,
     options: {
-      auth: 'notesapp_jwt',
+      auth: 'openmusicapp_jwt',
     },
   },
 ];

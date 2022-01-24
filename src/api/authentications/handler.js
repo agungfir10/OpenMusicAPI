@@ -1,10 +1,8 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class AuthenticationsHandler {
-    constructor(authenticationsService, usersService, tokenManager, validator) {
-        this._authenticationsService = authenticationsService;
-        this._usersService = usersService;
-        this._tokenManager = tokenManager;
+    constructor(service, validator) {
+        this._service = service;
         this._validator = validator;
 
         this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
@@ -12,25 +10,16 @@ class AuthenticationsHandler {
         this.deleteAuthenticationHandler = this.deleteAuthenticationHandler.bind(this);
     }
 
-    async postAuthenticationHandler(request, h) {
+    async postAuthenticationHandler({ payload }, h) {
         try {
-            this._validator.validatePostAuthenticationPayload(request.payload);
+            this._validator.validateAlbumPayload(payload);
 
-            const { username, password } = request.payload;
-
-            const id = await this._usersService.verifyUserCredential(username, password);
-
-            const accessToken = this._tokenManager.generateAccessToken({ id });
-            const refreshToken = this._tokenManager.generateRefreshToken({ id });
-
-            await this._authenticationsService.addRefreshToken(refreshToken);
-
+            const albumId = await this._service.addAlbum(payload);
             const response = h.response({
                 status: 'success',
-                message: 'Authentication berhasil ditambahkan',
+                message: 'Album berhasil ditambahkan',
                 data: {
-                    accessToken,
-                    refreshToken,
+                    albumId,
                 },
             });
             response.code(201);
