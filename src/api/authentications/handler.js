@@ -1,8 +1,10 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class AuthenticationsHandler {
-    constructor(service, validator) {
-        this._service = service;
+    constructor(authenticationsService, usersService, tokenManager, validator) {
+        this._authenticationsService = authenticationsService;
+        this._usersService = usersService;
+        this._tokenManager = tokenManager;
         this._validator = validator;
 
         this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
@@ -12,14 +14,21 @@ class AuthenticationsHandler {
 
     async postAuthenticationHandler({ payload }, h) {
         try {
-            this._validator.validateAlbumPayload(payload);
+            this._validator.validatePostAuthenticationPayload(payload);
 
-            const albumId = await this._service.addAlbum(payload);
+            const id = await this._usersService.verifyUserCredential(payload);
+
+            const accessToken = this._tokenManager.generateAccessToken({ id });
+            const refreshToken = this._tokenManager.generateRefreshToken({ id });
+
+            await this._authenticationsService.addRefreshToken(refreshToken);
+
             const response = h.response({
                 status: 'success',
-                message: 'Album berhasil ditambahkan',
+                message: 'Authentication berhasil ditambahkan',
                 data: {
-                    albumId,
+                    accessToken,
+                    refreshToken,
                 },
             });
             response.code(201);
@@ -44,14 +53,12 @@ class AuthenticationsHandler {
         }
     }
 
-    async putAuthenticationHandler(request, h) {
+    async putAuthenticationHandler({ payload }, h) {
         try {
-            this._validator.validatePutAuthenticationPayload(request.payload);
+            this._validator.validatePutAuthenticationPayload(payload);
 
-            const { refreshToken } = request.payload;
-
-            await this._authenticationsService.verifyRefreshToken(refreshToken);
-            const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+            await this._authenticationsService.verifyRefreshToken(payload);
+            const { id } = this._tokenManager.verifyRefreshToken(payload);
 
             const accessToken = this._tokenManager.generateAccessToken({ id });
             return {
@@ -81,13 +88,12 @@ class AuthenticationsHandler {
         }
     }
 
-    async deleteAuthenticationHandler(request, h) {
+    async deleteAuthenticationHandler({ payload }, h) {
         try {
-            this._validator.validateDeleteAuthenticationPayload(request.payload);
+            this._validator.validateDeleteAuthenticationPayload(payload);
 
-            const { refreshToken } = request.payload;
-            await this._authenticationsService.verifyRefreshToken(refreshToken);
-            await this._authenticationsService.deleteRefreshToken(refreshToken);
+            await this._authenticationsService.verifyRefreshToken(payload);
+            await this._authenticationsService.deleteRefreshToken(payload);
 
             return {
                 status: 'success',
