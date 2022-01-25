@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -28,7 +27,7 @@ class PlaylistsService {
 
     async getPlaylists(owner) {
         const query = {
-            text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id LEFT JOIN users ON playlists.owner = users.id WHERE collaborations.user_id = $1 ',
+            text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id LEFT JOIN users ON playlists.owner = users.id WHERE collaborations.user_id = $1 OR playlists.owner = $1',
             values: [owner]
         };
 
