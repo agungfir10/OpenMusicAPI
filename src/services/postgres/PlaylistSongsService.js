@@ -12,7 +12,7 @@ class PlaylistSongsService {
     }
 
     async addPlaylistSongs(playlistId, songId) {
-        const id = `playlist-songs-${nanoid(16)}`;
+        const id = `playlist-songs-${nanoid(6)}`;
         const query = {
             text: 'INSERT INTO playlist_songs VALUES ($1, $2, $3) RETURNING song_id',
             values: [id, playlistId, songId]
@@ -50,6 +50,12 @@ class PlaylistSongsService {
 
         if (!rows.length) {
             throw new NotFoundError('Playlist gagal di hapus dari playlist. playlist tidak ditemukan');
+        } else {
+            const queryDeleteSongsWithPlaylistId = {
+                text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 RETURNING id',
+                values: [playlistId]
+            };
+            await this._pool.query(queryDeleteSongsWithPlaylistId);
         }
     }
 
@@ -126,6 +132,24 @@ class PlaylistSongsService {
         if (rows.length > 0) {
             throw new ClientError('Lagu sudah tersimpan di playlist');
         }
+    }
+
+    async addPlaylistSongActivities(playlistId, songId, userId, action) {
+        const id = `playlist-song-activity-${nanoid(6)}`;
+        const query = {
+            text: 'INSERT INTO playlist_song_activities VALUES ($1, $2, $3, $4, $5)',
+            values: [id, playlistId, songId, userId, action]
+        };
+        await this._pool.query(query);
+    }
+
+    async deletePlaylistActivitiesById(playlistId) {
+        const query = {
+            text: 'DELETE FROM playlist_song_activities WHERE playlist_id = $1',
+            values: [playlistId]
+        };
+
+        await this._pool.query(query);
     }
 }
 

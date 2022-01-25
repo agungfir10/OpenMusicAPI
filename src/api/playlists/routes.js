@@ -15,30 +15,6 @@ const routes = (handler) => [
             auth: 'openmusicapp_jwt',
         },
     },
-    // {
-    //     method: 'DELETE',
-    //     path: '/playlists/{id}',
-    //     handler: handler.deletePlaylistHandler,
-    //     options: {
-    //         auth: 'openmusicapp_jwt',
-    //     },
-    // },
-    // {
-    //     method: 'GET',
-    //     path: '/playlists/{id}/songs',
-    //     handler: handler.getSongsPlaylist,
-    //     options: {
-    //         auth: 'openmusicapp_jwt',
-    //     },
-    // },
-    // {
-    //     method: 'DELETE',
-    //     path: '/playlists/{id}/songs',
-    //     handler: handler.deleteSongPlaylist,
-    //     options: {
-    //         auth: 'openmusicapp_jwt',
-    //     },
-    // },
 ];
 
 module.exports = routes;

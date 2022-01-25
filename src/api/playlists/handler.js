@@ -1,15 +1,13 @@
 const NotFoundError = require('../../exceptions/NotFoundError');
 const ServerError = require('../../utils/ServerError');
 
-class SongsHandler {
+class PlaylistsHandler {
     constructor(service, validator) {
         this._service = service;
         this._validator = validator;
 
         this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
         this.getPlaylistsHandler = this.getPlaylistsHandler.bind(this);
-        this.getPlaylistByIdHandler = this.getPlaylistByIdHandler.bind(this);
-        this.putPlaylistByIdHandler = this.putPlaylistByIdHandler.bind(this);
         this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
     }
 
@@ -75,79 +73,6 @@ class SongsHandler {
         }
     }
 
-    async getPlaylistByIdHandler({ params, auth }, h) {
-        try {
-            const { id } = params;
-            const { id: credentialId } = auth;
-
-            await this._service.verifyPlaylistOwner(id, credentialId);
-            const song = await this._service.getSongById(id);
-
-            const response = h.response({
-                status: 'success',
-                data: {
-                    song,
-                },
-            });
-            response.code(200);
-            return response;
-        } catch (error) {
-            if (error) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-
-                response.code(404);
-                return response;
-            }
-
-            const response = h.response(ServerError);
-            response.code(500);
-            return response;
-        }
-    }
-
-    async putPlaylistByIdHandler(request, h) {
-        try {
-            this._validator.validateSongPayload(request.payload);
-
-            const { title, year, performer, genre, duration } = request.payload;
-            const { id } = request.params;
-
-            await this._service.editSongById(id, {
-                title,
-                year,
-                performer,
-                genre,
-                duration,
-            });
-
-            return {
-                status: 'success',
-                message: 'Lagu berhasil diperbarui',
-            };
-        } catch (error) {
-            if (error) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-                if (error instanceof NotFoundError) {
-                    response.code(404);
-                } else {
-                    response.code(400);
-                }
-
-                return response;
-            }
-
-            const response = h.response(ServerError);
-            response.code(500);
-            return response;
-        }
-    }
-
     async deletePlaylistByIdHandler(request, h) {
         try {
             const { id } = request.params;
@@ -178,4 +103,4 @@ class SongsHandler {
     }
 }
 
-module.exports = SongsHandler;
+module.exports = PlaylistsHandler;

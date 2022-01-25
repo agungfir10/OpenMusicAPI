@@ -8,8 +8,18 @@ exports.up = (pgm) => {
             type: 'VARCHAR(50)',
         },
     });
+
+    pgm.addConstraint('songs', 'FK_SongAlbum', {
+        foreignKeys: {
+            columns: ['albumId'],
+            references: 'albums(id)',
+            onDelete: 'cascade'
+        }
+    });
 };
 
 exports.down = (pgm) => {
-    pgm.dropColumn('songs', 'albumId');
+    pgm.dropColumn('songs');
+
+    pgm.dropConstraint('songs', 'FK_SongAlbum');
 };
