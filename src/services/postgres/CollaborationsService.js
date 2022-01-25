@@ -43,6 +43,19 @@ class CollaborationsService {
         }
     }
 
+    async deleteCollaborationByPlaylistIdUserId(playlistId, userId) {
+        const query = {
+            text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
+            values: [playlistId, userId]
+        };
+
+        const { rowCount } = await this._pool.query(query);
+
+        if (!rowCount) {
+            throw new NotFoundError('Collaboration tidak ditemukan');
+        }
+    }
+
     async checkUserCollaborationExist(userId) {
         const query = {
             text: 'SELECT * FROM users WHERE id = $1',
