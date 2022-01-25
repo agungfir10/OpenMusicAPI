@@ -14,7 +14,7 @@ class UsersService {
     async addUser({ username, password, fullname }) {
         // TODO : Verifikasi username, pastikan belum terdaftar.
         await this.verifyNewUsername(username);
-        const id = `user-${nanoid(16)}`;
+        const id = `user-${nanoid(6)}`;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // TODO : Bila verifikasi lolos, maka masukkan user baru ke database

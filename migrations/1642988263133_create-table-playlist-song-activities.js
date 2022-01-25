@@ -26,8 +26,18 @@ exports.up = (pgm) => {
             default: pgm.func('current_timestamp'),
         }
     });
+
+    pgm.addConstraint('playlist_song_activities', 'FK_PlaylistSongActivities_Playlist', {
+        foreignKeys: {
+            columns: ['playlist_id'],
+            references: 'playlists(id)',
+            onDelete: 'cascade'
+        }
+    });
 };
 
 exports.down = (pgm) => {
     pgm.dropTable('playlist_song_activities');
+
+    pgm.dropConstraint('playlist_song_activities', 'FK_PlaylistSongActivities_Playlist');
 };

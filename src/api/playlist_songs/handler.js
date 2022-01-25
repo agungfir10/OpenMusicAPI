@@ -22,8 +22,10 @@ class PlaylistSongsHandler {
             await this._service.checkSongExist(songId);
             await this._service.verifyPlaylistOwner(playlistId, credentialId);
             await this._service.checkSongAndPlaylistExist(playlistId, songId);
+
             const songIdPlaylist = await this._service.addPlaylistSongs(playlistId, songId);
 
+            await this._service.addPlaylistSongActivities(playlistId, songId, credentialId, 'add');
             const response = h.response({
                 status: 'success',
                 message: 'Playlist songs berhasil ditambahkan',
@@ -97,6 +99,7 @@ class PlaylistSongsHandler {
 
             await this._service.verifyPlaylistOwner(playlistId, credentialId);
             await this._service.deleteSongFromPlaylistById(playlistId, songId);
+            await this._service.addPlaylistSongActivities(playlistId, songId, credentialId, 'delete');
 
             const response = h.response({
                 status: 'success',
@@ -130,7 +133,7 @@ class PlaylistSongsHandler {
 
             await this._service.verifyPlaylistOwner(playlistId, credenttialId);
             await this._service.deletePlaylistById(playlistId);
-            await this._service.deletePlaylistSongsByPlaylistId(playlistId);
+            await this._service.deletePlaylistActivitiesById(playlistId);
 
             const response = h.response({
                 status: 'success',

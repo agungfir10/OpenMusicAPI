@@ -11,7 +11,7 @@ class PlaylistsService {
     }
 
     async addPlaylist({ name, owner }) {
-        const id = `playlist-${nanoid(16)}`;
+        const id = `playlist-${nanoid(6)}`;
         const query = {
             text: 'INSERT INTO playlists VALUES ($1, $2, $3) RETURNING id',
             values: [id, name, owner],
@@ -28,7 +28,7 @@ class PlaylistsService {
 
     async getPlaylists(owner) {
         const query = {
-            text: 'SELECT id, name, owner AS username FROM playlists WHERE owner = $1 ',
+            text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id LEFT JOIN users ON playlists.owner = users.id WHERE collaborations.user_id = $1 ',
             values: [owner]
         };
 
@@ -36,10 +36,10 @@ class PlaylistsService {
         return rows;
     }
 
-    async getPlaylistById(id) {
+    async getPlaylistById(owner) {
         const query = {
-            text: 'SELECT * FROM playlists id=$1',
-            values: [id],
+            text: 'SELECT * FROM playlists WHERE id = $1',
+            values: [owner],
         };
         const { rows, rowCount } = await this._pool.query(query);
 
@@ -47,19 +47,6 @@ class PlaylistsService {
             throw new NotFoundError('Lagu tidak ditemukan');
         }
         return rows[0];
-    }
-
-    async editSongById(id, { title, year, performer, genre, duration }) {
-        const query = {
-            text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, updated_at=Now() WHERE id=$6 RETURNING id',
-            values: [title, year, performer, genre, duration, id],
-        };
-
-        const { rowCount } = await this._pool.query(query);
-
-        if (!rowCount) {
-            throw new NotFoundError('Lagu gagal diperbarui');
-        }
     }
 
     async deleteSongById(id) {
@@ -76,7 +63,7 @@ class PlaylistsService {
 
     async verifyPlaylistOwner(id, owner) {
         const query = {
-            text: 'SELECT * FROM playlists id = $1',
+            text: 'SELECT * FROM playlists WHERE id = $1',
             values: [id]
         };
         const { rows } = await this._pool.query(query);
