@@ -85,12 +85,12 @@ class SongsHandler {
     }
   }
 
-  async putSongByIdHandler(request, h) {
+  async putSongByIdHandler({ payload, params }, h) {
     try {
-      this._validator.validateSongPayload(request.payload);
+      this._validator.validateSongPayload(payload);
 
-      const { title, year, performer, genre, duration } = request.payload;
-      const { id } = request.params;
+      const { title, year, performer, genre, duration } = payload;
+      const { id } = params;
 
       await this._service.editSongById(id, {
         title,
