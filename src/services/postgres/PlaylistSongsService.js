@@ -59,19 +59,6 @@ class PlaylistSongsService {
         }
     }
 
-    async deletePlaylistSongsByPlaylistId(playlistId) {
-        const query = {
-            text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 RETURNING id',
-            values: [playlistId]
-        };
-
-        const { rows } = await this._pool.query(query);
-
-        if (!rows.length) {
-            throw new NotFoundError('Playlist songs gagal di hapus dari playlist. playlist songs tidak ditemukan');
-        }
-    }
-
     async getSongsPlaylist(playlistId) {
         const query = {
             text: 'SELECT songs.id, songs.title, songs.performer FROM playlist_songs LEFT JOIN songs ON playlist_songs.song_id = songs.id WHERE playlist_id = $1',
@@ -150,7 +137,7 @@ class PlaylistSongsService {
 
         const { rows } = await this._pool.query(query);
 
-        if (rows.length > 0) {
+        if (rows.length) {
             throw new ClientError('Lagu sudah tersimpan di playlist');
         }
     }

@@ -60,8 +60,7 @@ class PlaylistSongsHandler {
             const { id: credentialId } = auth.credentials;
 
             const playlist = await this._service.verifyPlaylistOwner(playlistId, credentialId);
-            const songs = await this._service.getSongsPlaylist(playlistId);
-            playlist.songs = songs;
+            playlist.songs = await this._service.getSongsPlaylist(playlistId);
             const response = h.response({
                 status: 'success',
                 message: 'Playlist songs berhasil ditambahkan',

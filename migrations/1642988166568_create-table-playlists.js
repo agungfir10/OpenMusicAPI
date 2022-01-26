@@ -1,7 +1,3 @@
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
     pgm.createTable('playlists', {
         id: {
@@ -27,7 +23,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-    pgm.dropTable('playlists');
-
     pgm.dropConstraint('playlists', 'FK_Playlists_Users');
+    pgm.dropTable('playlists');
 };
