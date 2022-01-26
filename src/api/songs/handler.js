@@ -1,3 +1,4 @@
+const ClientError = require('../../exceptions/ClientError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const ServerError = require('../../utils/ServerError');
 
@@ -47,12 +48,34 @@ class SongsHandler {
     }
   }
 
-  async getSongsHandler({ query }) {
-    const songs = await this._service.getSongs(query);
-    return {
-      status: 'success',
-      data: { songs },
-    };
+  async getSongsHandler({ query }, h) {
+    try {
+      const songs = await this._service.getSongs(query);
+
+      const response = h.response({
+
+        status: 'success',
+        data: { songs },
+      });
+
+      response.code(200);
+
+      return response;
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+
+        response.code(error.statusCode);
+        return response;
+      }
+
+      const response = h.response(ServerError);
+      response.code(500);
+      return response;
+    }
   }
 
   async getSongByIdHandler({ params }, h) {

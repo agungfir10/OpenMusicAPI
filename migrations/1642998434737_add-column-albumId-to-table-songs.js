@@ -1,7 +1,3 @@
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
     pgm.addColumn('songs', {
         albumId: {
@@ -19,7 +15,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-    pgm.dropColumn('songs');
-
     pgm.dropConstraint('songs', 'FK_SongAlbum');
+    pgm.dropColumn('songs');
 };
