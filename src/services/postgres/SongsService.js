@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
