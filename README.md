@@ -2,6 +2,9 @@
 
 ## Setup
 
+- Make File with name .env
+- Copy .example.env to .env and change value your project
+
 ```
 git clone
 ```
