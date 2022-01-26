@@ -28,6 +28,7 @@ const init = async () => {
     },
   });
 
+
   await server.register([
     {
       plugin: songs,
