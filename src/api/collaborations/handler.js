@@ -8,7 +8,6 @@ class CollaborationsHandler {
 
         this.postCollaborationHandler = this.postCollaborationHandler.bind(this);
         this.deleteCollaborationByPlaylistIdHandler = this.deleteCollaborationByPlaylistIdHandler.bind(this);
-
     }
 
     async postCollaborationHandler({ payload, auth }, h) {
