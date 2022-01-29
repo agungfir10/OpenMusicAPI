@@ -62,6 +62,7 @@ const init = async () => {
     // jika bukan ClientError, lanjutkan dengan response sebelumnya (tanpa terintervensi)
     return response.continue || response;
   });
+
   await server.start();
 };
 
